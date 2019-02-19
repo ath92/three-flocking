@@ -1,10 +1,18 @@
-function spawnBoid(scene, initialPosition = randomPosition(_width, _height, _depth)) {
-	const geometry = new THREE.ConeGeometry( 0.3, 1, 9 );
-	const material = new THREE.MeshBasicMaterial({ color: Math.random() * 0x00ff00 });
-	const mesh = new THREE.Mesh( geometry, material );
-	scene.add(mesh);
+function spawnBoid(scene, initialPosition = randomPosition(_width, _height, _depth), numberOfCones = 5) {
+	const cones = [];
+	for (let i = 0; i < numberOfCones; i++) {
+		const radius = 0.3 / Math.sqrt(i + 1);
+		const height = 1 / Math.sqrt(i + 1);
+		const geometry = new THREE.ConeGeometry( radius, height, 6 );
+		const material = new THREE.MeshBasicMaterial({ color: Math.random() * 0x00ff00, wireframe: true });
+		const mesh = new THREE.Mesh( geometry, material );
+		scene.add(mesh);
+		cones.push(mesh);
+	}
 
-	const position = Object.assign(mesh.position, initialPosition);
+	const head = cones[0];
+
+	const position = Object.assign(head.position, initialPosition);
 
 	const speed = new THREE.Vector3( 
 		Math.random() * speedLimit * 2 - speedLimit, 
@@ -77,15 +85,24 @@ function spawnBoid(scene, initialPosition = randomPosition(_width, _height, _dep
 	}
 
 	function move() {
+		moveTail();
 		position.add(speed);
+		rotate();
+	}
+
+	function moveTail() {
+		for (let i = numberOfCones - 1; i > 0; i--) {
+			cones[i].position.copy(cones[i - 1].position);
+			cones[i].rotation.copy(cones[i - 1].rotation);
+		}
 	}
 
 	function rotate() {
 		const normalizedSpeed = speed.clone().normalize();
 		const coneRotation = new THREE.Vector3(0, 1, 0);
 
-		mesh.quaternion.setFromUnitVectors(coneRotation, normalizedSpeed)
+		head.quaternion.setFromUnitVectors(coneRotation, normalizedSpeed)
 	}
 
-	return { mesh, position, speed, move, rotate, calculateSpeed };
+	return { position, speed, move, rotate, calculateSpeed };
 };

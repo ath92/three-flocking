@@ -4,7 +4,7 @@ const _depth = 50;
 
 const middle = new THREE.Vector3(_width / 2, _height / 2, _depth / 2);
 
-const numBoids = 1500;
+const numBoids = 1000;
 
 const neighborRadius = 4;
 const repelRadius = 2;

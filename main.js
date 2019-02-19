@@ -32,7 +32,6 @@ function animate() {
 	boids.forEach(boid => {
 		boid.calculateSpeed(boids);
 		boid.move();
-		boid.rotate();
 	});
 }
 animate();
