@@ -1,12 +1,34 @@
-function spawnBoid(scene, initialPosition = randomPosition(), numberOfCones = 5) {
+function spawnBoid(
+	_scene,
+	_radius = 50,
+	initialPosition = randomPosition(),
+	numberOfCones = 5,
+	neighborRadius = 4,
+	repelRadius = 2,
+	speedLimit = 0.4,
+
+	cohesionFactor = 0.005,
+	alignmentFactor = 0.10,
+	separationFactor = 0.1,
+	wallFactor = 0.01,
+	centerPull = 0.0005,
+
+	enemyProbability = 0.005,
+	enemyRadius = 10,
+	enemyRepelFactor = 0.2,
+	enemyCohesionFactor = 0.05
+	) {
+
+	const isEnemy = Math.random() < enemyProbability;
+
 	const cones = [];
 	for (let i = 0; i < numberOfCones; i++) {
 		const radius = 0.3 / Math.sqrt(i + 1);
 		const height = 1 / Math.sqrt(i + 1);
 		const geometry = new THREE.ConeGeometry( radius, height, 6 );
-		const material = new THREE.MeshBasicMaterial({ color: Math.random() * 0x00ff00});
+		const material = new THREE.MeshBasicMaterial({ color: (isEnemy ? 0xFF0000 : Math.random() * 0x00ff00) });
 		const mesh = new THREE.Mesh( geometry, material );
-		scene.add(mesh);
+		_scene.add(mesh);
 		cones.push(mesh);
 	}
 
@@ -23,11 +45,17 @@ function spawnBoid(scene, initialPosition = randomPosition(), numberOfCones = 5)
 	function calculateSpeed(boids) {
 		const neighbors = [];
 		const repellors = [];
+		const enemies = [];
 		boids.forEach(boid => {
 			if (boid === this) {
 				return;
 			}
 			const distance = position.distanceTo(boid.position);
+			// find enemies
+			if (!isEnemy && boid.isEnemy) {
+				if (distance < enemyRadius) enemies.push(boid);
+				return;
+			}
 			// find neighbors and repellors
 			if (distance < neighborRadius) {
 				if (distance < repelRadius) {
@@ -44,7 +72,7 @@ function spawnBoid(scene, initialPosition = randomPosition(), numberOfCones = 5)
 				(acc, neighbor) => acc.add(neighbor.position),
 				new THREE.Vector3(0, 0, 0)
 			).divideScalar(neighbors.length).sub(position);
-			speed.add(neighborsDiff.multiplyScalar(cohesionFactor));
+			speed.add(neighborsDiff.multiplyScalar(isEnemy ? enemyCohesionFactor : cohesionFactor));
 		}
 
 		// alignment
@@ -63,6 +91,15 @@ function spawnBoid(scene, initialPosition = randomPosition(), numberOfCones = 5)
 				new THREE.Vector3(0, 0, 0)
 			).divideScalar(repellors.length).sub(position);
 			speed.sub(repellorsDiff.multiplyScalar(separationFactor * (repelRadius / repellorsDiff.length()) ));
+		}
+
+		// flee from enemies
+		if (enemies.length) {
+			const enemiesDiff = enemies.reduce(
+				(acc, enemy) => acc.add(enemy.position),
+				new THREE.Vector3(0, 0, 0)
+			).divideScalar(enemies.length).sub(position);
+			speed.sub(enemiesDiff.multiplyScalar(enemyRepelFactor * (enemyRadius / enemiesDiff.length()) ));
 		}
 
 		// walls
@@ -98,5 +135,5 @@ function spawnBoid(scene, initialPosition = randomPosition(), numberOfCones = 5)
 		head.quaternion.setFromUnitVectors(coneRotation, normalizedSpeed)
 	}
 
-	return { position, speed, move, rotate, calculateSpeed };
+	return { position, speed, move, rotate, calculateSpeed, isEnemy };
 };

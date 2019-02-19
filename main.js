@@ -5,11 +5,13 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
+// size of scene
+const _radius = 50;
+
 // put camera in a nice position and point it in the right direction
-camera.position.set(0, 0, _radius * 0.6);
+camera.position.set(0, 0, _radius * 0.8);
 
 const controls = new THREE.OrbitControls( camera );
-controls.target = middle;
 
 // Add wireframe sphere around scene to know what we're looking at
 const sphereGeometery = new THREE.SphereGeometry(_radius * 1.1, 25, 25);
@@ -18,7 +20,7 @@ const sphereMesh = new THREE.Mesh(sphereGeometery, sphereMaterial);
 scene.add(sphereMesh);
 
 // spawn boids
-const boids = Array(numBoids).fill(null).map(() => spawnBoid(scene));
+const boids = Array(1000).fill(null).map(() => spawnBoid(scene, _radius));
 
 let pause = false;
 function animate() {
