@@ -17,7 +17,7 @@ const controls = new THREE.OrbitControls( camera );
 const sphereGeometery = new THREE.SphereGeometry(_radius * 1.1, 25, 25);
 const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFFFF, wireframe: true });
 const sphereMesh = new THREE.Mesh(sphereGeometery, sphereMaterial);
-scene.add(sphereMesh);
+// scene.add(sphereMesh);
 
 // spawn boids
 const boids = Array(1000).fill(null).map(() => spawnBoid(scene, _radius));

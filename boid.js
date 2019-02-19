@@ -61,7 +61,7 @@ function spawnBoid(
 				if (distance < repelRadius) {
 					repellors.push(boid);
 				} else {
-					neighbors.push(boid);
+					if (!boid.isEnemy) neighbors.push(boid);
 				}
 			}
 		});
