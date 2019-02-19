@@ -1,8 +1,6 @@
-const _width = 100;
-const _height = 50;
-const _depth = 50;
+const _radius = 50;
 
-const middle = new THREE.Vector3(_width / 2, _height / 2, _depth / 2);
+const middle = new THREE.Vector3(0, 0, 0);
 
 const numBoids = 1000;
 
@@ -13,4 +11,5 @@ const speedLimit = 0.4;
 const cohesionFactor = 0.005;
 const alignmentFactor = 0.10;
 const separationFactor = 0.1;
-const wallFactor = 0.1;
+const wallFactor = 0.01;
+const centerPull = 0.0003;

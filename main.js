@@ -6,17 +6,16 @@ renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
 // put camera in a nice position and point it in the right direction
-camera.position.set(_width / 2, _height / 2, _depth * 1.7);
+camera.position.set(0, 0, _radius * 0.6);
 
 const controls = new THREE.OrbitControls( camera );
 controls.target = middle;
 
-// Add wireframe cube around scene to know what we're looking at
-const boxGeometery = new THREE.BoxGeometry(_width, _height, _depth);
-const boxMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFFFF, wireframe: true });
-const boxMesh = new THREE.Mesh(boxGeometery, boxMaterial);
-boxMesh.position.set(_width / 2, _height / 2, _depth / 2);
-scene.add(boxMesh);
+// Add wireframe sphere around scene to know what we're looking at
+const sphereGeometery = new THREE.SphereGeometry(_radius * 1.1, 25, 25);
+const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFFFF, wireframe: true });
+const sphereMesh = new THREE.Mesh(sphereGeometery, sphereMaterial);
+scene.add(sphereMesh);
 
 // spawn boids
 const boids = Array(numBoids).fill(null).map(() => spawnBoid(scene));

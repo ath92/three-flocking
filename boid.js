@@ -1,10 +1,10 @@
-function spawnBoid(scene, initialPosition = randomPosition(_width, _height, _depth), numberOfCones = 5) {
+function spawnBoid(scene, initialPosition = randomPosition(), numberOfCones = 5) {
 	const cones = [];
 	for (let i = 0; i < numberOfCones; i++) {
 		const radius = 0.3 / Math.sqrt(i + 1);
 		const height = 1 / Math.sqrt(i + 1);
 		const geometry = new THREE.ConeGeometry( radius, height, 6 );
-		const material = new THREE.MeshBasicMaterial({ color: Math.random() * 0x00ff00, wireframe: true });
+		const material = new THREE.MeshBasicMaterial({ color: Math.random() * 0x00ff00});
 		const mesh = new THREE.Mesh( geometry, material );
 		scene.add(mesh);
 		cones.push(mesh);
@@ -66,17 +66,11 @@ function spawnBoid(scene, initialPosition = randomPosition(_width, _height, _dep
 		}
 
 		// walls
-		speed.add(new THREE.Vector3(
-			Math.min(0, _width - position.x),
-			Math.min(0, _height - position.y),
-			Math.min(0, _depth - position.z),
-		).multiplyScalar(wallFactor));
+		const distanceFromCenter = position.length();
+		speed.add(position.clone().multiplyScalar(Math.min(0, (_radius - distanceFromCenter) * wallFactor)));
 
-		speed.add(new THREE.Vector3(
-			Math.max(0, -position.x),
-			Math.max(0, -position.y),
-			Math.max(0, -position.z),
-		).multiplyScalar(wallFactor));
+		// pull towards the center 
+		speed.add(position.clone().negate().multiplyScalar(centerPull));
 		
 		speed.clamp(
 			new THREE.Vector3(-speedLimit, -speedLimit, -speedLimit),
