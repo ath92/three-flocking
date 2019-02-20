@@ -47,7 +47,7 @@ function spawnBoid(
 		const repellors = [];
 		const enemies = [];
 		boids.forEach(boid => {
-			if (boid === this) {
+			if (boid.position === position) {
 				return;
 			}
 			const distance = position.distanceTo(boid.position);
@@ -102,10 +102,6 @@ function spawnBoid(
 			speed.sub(enemiesDiff.multiplyScalar(enemyRepelFactor * (enemyRadius / enemiesDiff.length()) ));
 		}
 
-		// walls
-		const distanceFromCenter = position.length();
-		speed.add(position.clone().multiplyScalar(Math.min(0, (_radius - distanceFromCenter) * wallFactor)));
-
 		// pull towards the center 
 		speed.add(position.clone().negate().multiplyScalar(centerPull));
 		
@@ -115,7 +111,17 @@ function spawnBoid(
 		);
 	}
 
+	function calculateSpeedFromGrid(grid) {
+		const closeBoids = grid.getBoids(position);
+
+		calculateSpeed(closeBoids);
+	}
+
 	function move() {
+		// walls
+		const distanceFromCenter = position.length();
+		speed.add(position.clone().multiplyScalar(Math.min(0, (_radius - distanceFromCenter) * wallFactor)));
+
 		moveTail();
 		position.add(speed);
 		rotate();
@@ -135,5 +141,5 @@ function spawnBoid(
 		head.quaternion.setFromUnitVectors(coneRotation, normalizedSpeed)
 	}
 
-	return { position, speed, move, rotate, calculateSpeed, isEnemy };
-};
+	return { position, speed, move, rotate, calculateSpeed, calculateSpeedFromGrid, isEnemy };
+}

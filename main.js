@@ -20,7 +20,7 @@ const sphereMesh = new THREE.Mesh(sphereGeometery, sphereMaterial);
 // scene.add(sphereMesh);
 
 // spawn boids
-const boids = Array(1000).fill(null).map(() => spawnBoid(scene, _radius));
+const boids = Array(1500).fill(null).map(() => spawnBoid(scene, _radius));
 
 let pause = false;
 function animate() {
@@ -29,9 +29,11 @@ function animate() {
 	controls.update();
 
 	if (pause) return;
+	const grid = buildGrid(boids, -_radius, _radius, 5);
 
 	boids.forEach(boid => {
-		boid.calculateSpeed(boids);
+		boid.calculateSpeedFromGrid(grid);
+		// boid.calculateSpeed(boids);
 		boid.move();
 	});
 }
