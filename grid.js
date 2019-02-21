@@ -1,5 +1,4 @@
-function buildGrid(
-	boids,
+function Grid(
 	min = -50,
 	max = 50,
 	cubeSize = 10,
@@ -16,12 +15,23 @@ function buildGrid(
 		}
 	}
 
-	boids.forEach(boid => {
-		const { x, y, z } = boid.position;
-		grid[Math.round((x - min) / cubeSize)]
-		[Math.round((y - min) / cubeSize)]
-		[Math.round((z - min) / cubeSize)].push(boid);
-	});
+	function fillGrid(boids) {
+		// clear grid
+		for (let x = 0; x <= limit; x++) {
+			for (let y = 0; y <= limit; y++) {
+				for (let z = 0; z <= limit; z++) {
+					grid[x][y][z].length = 0;
+				}
+			}
+		}
+		// put boids in grid
+		boids.forEach(boid => {
+			const { x, y, z } = boid.position;
+			grid[Math.round((x - min) / cubeSize)]
+			[Math.round((y - min) / cubeSize)]
+			[Math.round((z - min) / cubeSize)].push(boid);
+		});
+	}
 
 	function getBoids({ x, y, z }, searchDistance = 1) {
 		const _x = Math.round((x - min) / cubeSize);
@@ -45,5 +55,5 @@ function buildGrid(
 		return found;
 	}
 
-	return { getBoids };
+	return { getBoids, fillGrid };
 }

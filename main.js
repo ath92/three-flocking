@@ -21,6 +21,8 @@ const sphereMesh = new THREE.Mesh(sphereGeometery, sphereMaterial);
 
 // spawn boids
 const boids = Array(1500).fill(null).map(() => spawnBoid(scene, _radius));
+// instantiate grid
+const grid = Grid(-_radius, _radius, 5);
 
 let pause = false;
 function animate() {
@@ -29,7 +31,8 @@ function animate() {
 	controls.update();
 
 	if (pause) return;
-	const grid = buildGrid(boids, -_radius, _radius, 5);
+
+	grid.fillGrid(boids);
 
 	boids.forEach(boid => {
 		boid.calculateSpeedFromGrid(grid);
