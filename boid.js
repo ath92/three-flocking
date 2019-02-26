@@ -1,8 +1,8 @@
-function spawnBoid(
+function Boid(
 	_scene,
 	_radius = 50,
 	initialPosition = randomPosition(),
-	numberOfCones = 5,
+	numberOfCones = 4,
 	neighborRadius = 4,
 	repelRadius = 2,
 	speedLimit = 0.4,
@@ -13,9 +13,9 @@ function spawnBoid(
 	wallFactor = 0.01,
 	centerPull = 0.0005,
 
-	enemyProbability = 0.005,
+	enemyProbability = 0.01,
 	enemyRadius = 10,
-	enemyRepelFactor = 0.2,
+	enemyRepelFactor = 0.1,
 	enemyCohesionFactor = 0.05
 	) {
 
@@ -25,7 +25,7 @@ function spawnBoid(
 	for (let i = 0; i < numberOfCones; i++) {
 		const radius = 0.3 / Math.sqrt(i + 1);
 		const height = 1 / Math.sqrt(i + 1);
-		const geometry = new THREE.ConeGeometry( radius, height, 6 );
+		const geometry = new THREE.ConeGeometry( radius, height, 4 );
 		const material = new THREE.MeshBasicMaterial({ color: (isEnemy ? 0xFF0000 : Math.random() * 0x00ff00) });
 		const mesh = new THREE.Mesh( geometry, material );
 		_scene.add(mesh);
@@ -112,7 +112,7 @@ function spawnBoid(
 	}
 
 	function calculateSpeedFromGrid(grid) {
-		const closeBoids = grid.getBoids(position);
+		const closeBoids = grid.getBoids(position, 2);
 
 		calculateSpeed(closeBoids);
 	}

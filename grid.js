@@ -4,32 +4,23 @@ function Grid(
 	cubeSize = 10,
 ) {
 	const limit = (max - min) / cubeSize;
+	const limit2 = limit ** 2;
+	const limit3 = limit ** 3;
 	const grid = [];
-	for (let x = 0; x <= limit; x++) {
-		grid[x] = [];
-		for (let y = 0; y <= limit; y++) {
-			grid[x][y] = [];
-			for (let z = 0; z <= limit; z++) {
-				grid[x][y][z] = [];
-			}
-		}
-	}
 
 	function fillGrid(boids) {
 		// clear grid
-		for (let x = 0; x <= limit; x++) {
-			for (let y = 0; y <= limit; y++) {
-				for (let z = 0; z <= limit; z++) {
-					grid[x][y][z].length = 0;
-				}
-			}
+		for (let i = 0; i <= limit ** 3; i++) {
+			grid[i] = [];
 		}
 		// put boids in grid
 		boids.forEach(boid => {
 			const { x, y, z } = boid.position;
-			grid[Math.round((x - min) / cubeSize)]
-			[Math.round((y - min) / cubeSize)]
-			[Math.round((z - min) / cubeSize)].push(boid);
+			const i = Math.max(Math.min(Math.round((x - min) / cubeSize) * (limit2)
+			 		+ Math.round((y - min) / cubeSize) * limit
+			 		+ Math.round((z - min) / cubeSize)
+			 		, limit3), 0);
+			grid[i].push(boid);
 		});
 	}
 
@@ -38,16 +29,19 @@ function Grid(
 		const _y = Math.round((y - min) / cubeSize);
 		const _z = Math.round((z - min) / cubeSize);
 
-		let found = [];
+		const found = [];
 
-		let xStart = Math.max(_x - searchDistance, 0);
-		let yStart = Math.max(_y - searchDistance, 0);
-		let zStart = Math.max(_z - searchDistance, 0);
+		const xStart = Math.max(_x - searchDistance, 0);
+		const yStart = Math.max(_y - searchDistance, 0);
+		const zStart = Math.max(_z - searchDistance, 0);
 
 		for(let i = xStart; i <= _x + searchDistance && i <= limit; i++) { 
 			for(let j = yStart; j <= _y + searchDistance && j <= limit; j++) {
-				for(let k = zStart; k <= _z + searchDistance && k <= limit; k++) {	
-					grid[i][j][k].forEach(boid => found.push(boid));
+				for(let k = zStart; k <= _z + searchDistance && k <= limit; k++) {
+					const here = grid[(i * (limit2)) + (j * limit) + k]
+					for (let l = 0; l < here.length; l++) {
+						found[found.length] = here[l];
+					}
 				}
 			}		
 		}

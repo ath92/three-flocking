@@ -20,9 +20,9 @@ const sphereMesh = new THREE.Mesh(sphereGeometery, sphereMaterial);
 // scene.add(sphereMesh);
 
 // spawn boids
-const boids = Array(1500).fill(null).map(() => spawnBoid(scene, _radius));
+const boids = Array(1000).fill(null).map(() => Boid(scene, _radius));
 // instantiate grid
-const grid = Grid(-_radius, _radius, 5);
+const grid = Grid(-_radius * 1.2, _radius * 1.2, 5);
 
 let pause = false;
 function animate() {
