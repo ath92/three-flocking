@@ -22,7 +22,7 @@ const sphereMesh = new THREE.Mesh(sphereGeometery, sphereMaterial);
 // spawn boids
 const boids = Array(1000).fill(null).map(() => Boid(scene, _radius));
 // instantiate grid
-const grid = Grid(-_radius * 1.2, _radius * 1.2, 5);
+const grid = Grid(-_radius * 1.0, _radius * 1.0, 5);
 
 let pause = false;
 function animate() {
