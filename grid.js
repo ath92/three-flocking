@@ -39,9 +39,7 @@ function Grid(
 			for(let j = yStart; j <= _y + searchDistance && j <= limit; j++) {
 				for(let k = zStart; k <= _z + searchDistance && k <= limit; k++) {
 					const here = grid[(i * (limit2)) + (j * limit) + k];
-					for (let l = 0; here && l < here.length; l++) {
-						found[found.length] = here[l];
-					}
+					if (here) here.forEach(boid => found.push(boid));
 				}
 			}		
 		}
